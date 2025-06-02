@@ -1,7 +1,7 @@
 import type { Client, ClientEvents } from "discord.js";
-import type DiscordEvent from "../interfaces/discord-event";
+import type DiscordEvent from "../interfaces/IDiscordEvent";
 import type { DatabaseService } from "../db/db";
-import type CommandService from "./command-service";
+import type CommandService from "./commandService";
 import Ready from "../events/ready";
 import GuildMemberAdd from "../events/guildMemberAdd";
 import InteractionCreate from "../events/interactionCreate";
@@ -13,7 +13,11 @@ export default class EventService {
   private db: DatabaseService;
   private commandService: CommandService;
 
-  constructor(client: Client, db: DatabaseService, commandService: CommandService) {
+  constructor(
+    client: Client,
+    db: DatabaseService,
+    commandService: CommandService
+  ) {
     this.client = client;
     this.db = db;
     this.commandService = commandService;

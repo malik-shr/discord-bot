@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import { BotManager } from "./bot-manager";
+import { BotManager } from "./botManager";
 
 async function main() {
   // Create client with required intents

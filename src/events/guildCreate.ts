@@ -1,9 +1,6 @@
-import {
-  Events,
-  Guild,
-} from "discord.js";
+import { Events, Guild } from "discord.js";
 import type { DatabaseService } from "../db/db";
-import type DiscordEvent from "../interfaces/discord-event";
+import type DiscordEvent from "../interfaces/IDiscordEvent";
 
 export default class GuildCreate implements DiscordEvent {
   name = Events.GuildCreate as const;

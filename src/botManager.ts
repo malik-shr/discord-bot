@@ -1,8 +1,8 @@
 import type { Client } from "discord.js";
 import { DatabaseService } from "./db/db";
-import CommandService from "./services/command-service";
-import EventService from "./services/event-service";
-import type { Environment } from "./interfaces/enviroment";
+import CommandService from "./services/commandService";
+import EventService from "./services/eventService";
+import type { Environment } from "./interfaces/IEnviroment";
 
 export class BotManager {
   private client: Client;
@@ -21,7 +21,7 @@ export class BotManager {
 
   async start(): Promise<void> {
     try {
-      await this.commandService.init()
+      await this.commandService.init();
       await this.eventService.init();
 
       await this.client.login(this.env.botToken);
