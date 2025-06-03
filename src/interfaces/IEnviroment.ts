@@ -1,4 +1,5 @@
 export interface Environment {
-  botToken: string;
-  appId: string;
+    botToken: string
+    appId: string
+    guildId: string
 }

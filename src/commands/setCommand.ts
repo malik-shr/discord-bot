@@ -5,14 +5,12 @@ import {
     SlashCommandBuilder,
 } from "discord.js"
 import type DiscordCommand from "../interfaces/IDiscordCommand"
-import type { DatabaseService } from "../db/db"
+import { db } from "../services/initServices"
 
-export default class Set implements DiscordCommand {
+export default class SetCommand implements DiscordCommand {
     data: SlashCommandBuilder
-    private db: DatabaseService
 
-    constructor(db: DatabaseService) {
-        this.db = db
+    constructor() {
         this.data = new SlashCommandBuilder()
             .setName("set")
             .setDescription("Set your welcome channel!")
@@ -56,7 +54,7 @@ export default class Set implements DiscordCommand {
                 })
             }
 
-            this.db.insertWelcomeChannel({
+            db.insertWelcomeChannel({
                 guild_id: interaction.commandGuildId!,
                 channel_id: channel.id,
             })
@@ -75,7 +73,7 @@ export default class Set implements DiscordCommand {
                 })
             }
 
-            this.db.insertWelcomeRole({
+            db.insertWelcomeRole({
                 guild_id: interaction.commandGuildId!,
                 role_id: role.id!,
             })

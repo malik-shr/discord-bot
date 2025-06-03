@@ -1,28 +1,15 @@
-import {
-    ChatInputCommandInteraction,
-    Events,
-    type ClientEvents,
-    type GuildMember,
-    type Interaction,
-} from "discord.js"
-import type { DatabaseService } from "../db/db"
+import { ChatInputCommandInteraction, Events } from "discord.js"
 import type DiscordEvent from "../interfaces/IDiscordEvent"
-import type CommandService from "../services/commandService"
+import { commandService } from "../services/initServices"
 
 export default class InteractionCreate implements DiscordEvent {
     name = Events.InteractionCreate as const
-    db: DatabaseService
-    commandService: CommandService
-
-    constructor(db: DatabaseService, commandService: CommandService) {
-        this.db = db
-        this.commandService = commandService
-    }
 
     async execute(interaction: ChatInputCommandInteraction) {
         if (!interaction.isCommand()) return
 
-        const command = this.commandService.commands.get(interaction.commandName)
+        const command = commandService.commands.get(interaction.commandName)
+
         if (command) {
             try {
                 await command.execute(interaction)

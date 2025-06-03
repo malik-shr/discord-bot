@@ -1,55 +1,36 @@
-import type { Client } from "discord.js";
-import { DatabaseService } from "./db/db";
-import CommandService from "./services/commandService";
-import EventService from "./services/eventService";
-import type { Environment } from "./interfaces/IEnviroment";
+import type { Client } from "discord.js"
+import { commands, commandService, db, env, events } from "./services/initServices"
+import Ping from "./commands/ping"
+import SetCommand from "./commands/setCommand"
+import CustomCommand from "./commands/customCommand"
+import Cmd from "./utils/cmd"
 
 export class BotManager {
-  private client: Client;
-  private db: DatabaseService;
-  private eventService: EventService;
-  private commandService: CommandService;
-  private env: Environment;
+    private client: Client
 
-  constructor(client: Client) {
-    this.client = client;
-    this.env = this.validateEnvironment();
-    this.db = new DatabaseService("./data/bot.sqlite");
-    this.commandService = new CommandService(this.env, this.db);
-    this.eventService = new EventService(client, this.db, this.commandService);
-  }
-
-  async start(): Promise<void> {
-    try {
-      await this.commandService.init();
-      await this.eventService.init();
-
-      await this.client.login(this.env.botToken);
-
-      console.log("Bot started successfully!");
-    } catch (error) {
-      console.error("Failed to start bot:", error);
-      throw error;
-    }
-  }
-
-  async stop(): Promise<void> {
-    console.log("Shutting down bot...");
-    this.client.destroy();
-  }
-
-  validateEnvironment(): Environment {
-    const botToken = process.env.BOT_TOKEN;
-    const appId = process.env.APP_ID;
-
-    if (!botToken) {
-      throw new Error("BOT_TOKEN environment variable is required");
+    constructor(client: Client) {
+        this.client = client
     }
 
-    if (!appId) {
-      throw new Error("APP_ID environment variable is required");
-    }
+    async start(): Promise<void> {
+        const guildCommands = db.getCommands(env.guildId)
+        for (const command of commands) {
+            commandService.registerCommand(command)
+        }
 
-    return { botToken, appId };
-  }
+        for (const guildCommand of guildCommands) {
+            const cmd = new Cmd(guildCommand.name, guildCommand.response)
+            commandService.registerCommand(cmd)
+        }
+
+        for (const event of events) {
+            if (event.once) {
+                this.client.once(event.name, (...args) => event.execute(...args))
+            } else {
+                this.client.on(event.name, (...args) => event.execute(...args))
+            }
+        }
+
+        await this.client.login(env.botToken)
+    }
 }
